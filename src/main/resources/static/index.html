@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geek String Sender</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+    <style>
+        body {
+            background-color: #101023; /* 深蓝色背景 */
+            color: #ffffff; /* 白色文本 */
+            font-family: 'Courier New', Courier, monospace; /* 代码风格字体 */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* 禁止页面滚动 */
+        }
+
+        #robotHead {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: rotateHead 4s infinite linear; /* 旋转动画 */
+            transform-style: preserve-3d; /* 保留3D效果 */
+        }
+
+        #inputString{
+            padding: 15px;
+            margin: 10px;
+            border: 1px solid #0077cc; /* 蓝色边框 */
+            background-color: #004080; /* 深蓝色背景 */
+            color: #ffffff; /* 白色文本 */
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+            width: 300px;
+            transition: background-color 0.3s ease-in-out;
+        }
+        
+        
+        #sendButton {
+            padding: 15px;
+            margin: 10px;
+            border: 1px solid #0077cc; /* 蓝色边框 */
+            background-color: #004080; /* 深蓝色背景 */
+            color: #ffffff; /* 白色文本 */
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+            width: 100px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #sendButton:hover {
+            background-color: #0077cc; /* 蓝色背景，悬停时 */
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* 将粒子效果置于背景之后 */
+        }
+
+      .success-message {
+      position: fixed;
+      top: 65%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1000;
+    }
+
+    </style>
+</head>
+<body>
+
+<div class="success-message" id="successMessage">
+    发送成功！
+</div>
+
+    <div id="particles-js"></div> <!-- 粒子效果容器 -->
+    <span id="robotHead" class="animate__animated animate__bounceIn">🤖</span> <!-- 机器人图标 -->
+    <input type="text" id="inputString" placeholder="Enter your string" class="hvr-fade" onkeydown="handleKeyPress(event)">
+    <button id="sendButton" onclick="sendString()" class="hvr-fade">Send</button>
+
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        function handleKeyPress(event) {
+        // 检查按下的键是否是回车键
+        if (event.key === "Enter") {
+          sendString();
+          //showSuccessMessage();
+        }
+      }
+              particlesJS('particles-js', {
+                  particles: {
+                      number: { value: 80, density: { enable: true, value_area: 800 } },
+                      color: { value: '#ffffff' },
+                      shape: { type: 'circle', stroke: { width: 0, color: '#000000' }, polygon: { nb_sides: 5 }, image: { src: 'img/github.svg', width: 100, height: 100 } },
+                      opacity: { value: 0.5, random: true, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+                      size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+                      line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+                      move: { enable: true, speed: 1, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
+                  },
+                  interactivity: {
+                      detect_on: 'canvas',
+                      events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                      modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
+                  }
+              });
+              function sendString() {
+                  var inputElement = document.getElementById("inputString");
+                  var inputString = inputElement.value;
+
+                  // 使用XMLHttpRequest或Fetch API将字符串发送到服务器
+                  // 请根据您的服务器端实现进行相应的修改
+                  // 以下示例使用Fetch API
+                  fetch('/sendString', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ receivedString: inputString }),
+                  })
+                  .then(response => response.json())
+                  .then(data => console.log(data))
+                  //.catch(error => console.error('Error:', error));
+                  showSuccessMessage();
+              }
+
+      function showSuccessMessage() {
+        // 显示成功提示框
+        var successMessage = document.getElementById('successMessage');
+        successMessage.style.display = 'block';
+
+        // 在 2000 毫秒（2秒）后隐藏成功提示框
+        setTimeout(function() {
+          successMessage.style.display = 'none';
+        }, 2000);
+      }
+
+
+
+    </script>
+</body>
+</html>
